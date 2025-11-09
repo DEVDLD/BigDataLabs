@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  hadoop-master:
+    build: .
+    container_name: hadoop-master
+    hostname: hadoop-master
+    ports:
+      - "9870:9870"   # HDFS NameNode
+      - "8088:8088"   # YARN ResourceManager
+      - "19888:19888" # MapReduce JobHistory
+      - "9000:9000"   # HDFS NameNode (internal)
+      - "7077:7077"   # Spark Master
+      - "8080:8080"   # Spark Master UI
+      - "4040:4040"   # Spark App UI
+    volumes:
+      - "C:/Users/oussa/OneDrive/Documents/hadoop_project/:/shared_volume"
+    networks:
+      - hadoop
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - SPARK_HOME=/opt/spark
+      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    command: >
+      bash -c "
+        # Configuration mapred-site.xml
+        cat > $${HADOOP_HOME}/etc/hadoop/mapred-site.xml << 'EOF'
+        <?xml version='1.0'?>
+        <?xml-stylesheet type='text/xsl' href='configuration.xsl'?>
+        <configuration>
+          <property>
+            <name>mapreduce.framework.name</name>
+            <value>yarn</value>
+          </property>
+          <property>
+            <name>mapreduce.jobhistory.address</name>
+            <value>hadoop-master:10020</value>
+          </property>
+          <property>
+            <name>mapreduce.jobhistory.webapp.address</name>
+            <value>0.0.0.0:19888</value>
+          </property>
+          <property>
+            <name>mapreduce.jobhistory.done-dir</name>
+            <value>/mapred/history/done</value>
+          </property>
+          <property>
+            <name>mapreduce.jobhistory.intermediate-done-dir</name>
+            <value>/mapred/history/done_intermediate</value>
+          </property>
+          <property>
+            <name>yarn.app.mapreduce.am.staging-dir</name>
+            <value>/tmp</value>
+          </property>
+        </configuration>
+        EOF
+
+        # Attendre que les slaves soient prêts
+        sleep 30
+
+        # Arrêter les services s'ils sont déjà en cours
+        stop-all.sh 2>/dev/null || true
+        mr-jobhistory-daemon.sh stop historyserver 2>/dev/null || true
+
+        # Formater HDFS (uniquement si nécessaire)
+        hdfs namenode -format -force 2>/dev/null || true
+
+        # Démarrer HDFS
+        start-dfs.sh
+
+        # Démarrer YARN
+        start-yarn.sh
+
+        # Démarrer le JobHistory Server
+        mr-jobhistory-daemon.sh start historyserver
+
+        # Créer les répertoires HDFS nécessaires
+        hdfs dfs -mkdir -p /tmp /mapred/history/done /mapred/history/done_intermediate /user/history 2>/dev/null || true
+        hdfs dfs -chmod -R 1777 /tmp /mapred/history/done /mapred/history/done_intermediate /user/history 2>/dev/null || true
+        hdfs dfs -chown -R yarn:yarn /mapred/history 2>/dev/null || true
+
+        echo 'Hadoop Master démarré avec succès'
+        tail -f /dev/null
+      "
+
+  hadoop-slave1:
+    build: .
+    container_name: hadoop-slave1
+    hostname: hadoop-slave1
+    ports:
+      - "8040:8042"   # YARN NodeManager
+    networks:
+      - hadoop
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - SPARK_HOME=/opt/spark
+    depends_on:
+      - hadoop-master
+    command: >
+      bash -c "
+        # Attendre que le master soit configuré
+        sleep 45
+        
+        # Démarrer les services DataNode et NodeManager
+        hdfs --daemon start datanode
+        yarn --daemon start nodemanager
+        
+        echo 'Hadoop Slave1 démarré avec succès'
+        tail -f /dev/null
+      "
+
+  hadoop-slave2:
+    build: .
+    container_name: hadoop-slave2
+    hostname: hadoop-slave2
+    ports:
+      - "8041:8042"   # YARN NodeManager
+    networks:
+      - hadoop
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - SPARK_HOME=/opt/spark
+    depends_on:
+      - hadoop-master
+    command: >
+      bash -c "
+        # Attendre que le master soit configuré
+        sleep 45
+        
+        # Démarrer les services DataNode et NodeManager
+        hdfs --daemon start datanode
+        yarn --daemon start nodemanager
+        
+        echo 'Hadoop Slave2 démarré avec succès'
+        tail -f /dev/null
+      "
+
+networks:
+  hadoop:
+    driver: bridge
+
+volumes:
+  hadoop_data:
+    driver: local

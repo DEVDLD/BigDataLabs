@@ -1,0 +1,23 @@
+Lab 0
+L’objectif de ce TP est de :
+ 
+•	Installer un cluster hadoop avec docker 
+•	Se familiariser avec les commandes HDFS
+img1.png
+
+img2
+
+img3
+
+NameNode web UI: localhost:9870
+img4
+Ressource Manager UI: localhost:8088
+img5
+MapReduce JobHistory Server: localhost:19888
+img6
+img7
+img8
+img9
+img10
+img11
+img12
