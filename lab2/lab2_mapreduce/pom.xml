@@ -43,7 +43,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>edu.supmti.hadoop.mapreduce.MainJob</mainClass>
+                            <mainClass>edu.supmti.hadoop.mapreduce.WordCount</mainClass>
                         </manifest>
                     </archive>
                     <finalName>WordCount</finalName>

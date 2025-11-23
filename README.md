@@ -61,3 +61,45 @@
 
 #### 3. HDFSWrite
 ![HDFSWrite Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/18.png)
+
+---
+
+## Lab 2 :  Programmation avec l’API MapReduce
+
+### Objectifs du TP
+- **S’initier à la programmation avec L’API mapreduce**
+- **Implémenter l’exemple WordCount en Java**
+- **Exécuter MapReduce en Python avec Hadoop Streaming**
+
+### I. Programmation avec l’api MapReduce en Java
+- **Lancement de la commande hadoop jar /shared_volume/WordCount.jar inputfile outputfolder**
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/19.png)
+
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/20.png)
+
+- **Contenu du dossier output :**
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/21.png)
+
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/22.png)
+
+- **Contenu du fichier part-r-00000**
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/23.png)
+
+- **Job History**
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/24.png)
+
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/25.png)
+
+### II. Programmation avec l’api MapReduce en Python avec Hadoop Streaming
+- **Implémenter l’exemple wordcount à base de mapreduce en python et de l’utilitaire hadoop streaming**
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/26.png)
+
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/27.png)
+
+- **Contenu du dossier output :**
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/28.png)
+
+- **Job History**
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/29.png)
+
+![HadoopFileStatus Code](https://github.com/DEVDLD/BigDataLabs/blob/main/images/30.png)
